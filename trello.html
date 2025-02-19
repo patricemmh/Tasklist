@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capcha'd Beauty | e-Commerce Battle Plan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #FBFCFC;
+            min-height: 100vh;
+        }
+
+        .site-header {
+            height: 100px;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            background-color: #FFFFFF;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1001;
+        }
+
+        .header-logo {
+            max-height: 100%;
+            width: auto;
+        }
+
+        .header-headshot {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .board-content {
+            padding: 20px 0;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .board-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0;
+            max-width: calc(100% - 40px);
+            margin-left: 36px;
+            margin-right: 20px;
+        }
+
+        h2 {
+            text-align: left;
+            font-size: 24px;
+            margin: 10px 0;
+            color: #000;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-weight: 600;
+            padding: 0;
+        }
+
+        .board-container {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding: 0 20px 20px 20px;
+            min-height: calc(100vh - 100px);
+            justify-content: center;
+        }
+
+        .board-column {
+            background: #FFFFFF;
+            border-radius: 10px;
+            min-width: 300px;
+            max-width: 300px;
+            padding: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .column-header {
+            font-size: 16px;
+            font-weight: 600;
+            padding: 10px;
+            margin-bottom: 10px;
+            color: #172b4d;
+            font-family: 'Source Sans Pro', sans-serif;
+            border-radius: 8px;
+        }
+
+        .task-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .task-card:hover {
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transform: translateY(-2px);
+        }
+
+        .task-card.week1 { border-left: 4px solid #FFB5A7; }
+        .task-card.week2 { border-left: 4px solid #A8D8EA; }
+        .task-card.week3 { border-left: 4px solid #A7D7C5; }
+        .task-card.week4 { border-left: 4px solid #F7D794; }
+
+        .task-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 15px;
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+
+        .task-checklist {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .task-checklist li {
+            display: flex;
+            align-items: center;
+            margin: 7px 0;
+            font-size: 14px;
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+
+        .task-checklist label {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .task-checklist input[type="checkbox"] {
+            margin: 0 8px 0 0;
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border: 2px solid #ccc;
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .task-checklist span {
+            line-height: 16px;
+        }
+
+        .checked {
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+
+        .column-header.week1 { background: #FFB5A7; }
+        .column-header.week2 { background: #A8D8EA; }
+        .column-header.week3 { background: #A7D7C5; }
+        .column-header.week4 { background: #F7D794; }
+
+        /* Week 1 category checkboxes */
+        .task-card.week1 .task-checklist input[type="checkbox"]:checked {
+            background-color: #FFB5A7;
+            border-color: #FFB5A7;
+        }
+
+        /* Week 2 category checkboxes */
+        .task-card.week2 .task-checklist input[type="checkbox"]:checked {
+            background-color: #A8D8EA;
+            border-color: #A8D8EA;
+        }
+
+        /* Week 3 category checkboxes */
+        .task-card.week3 .task-checklist input[type="checkbox"]:checked {
+            background-color: #A7D7C5;
+            border-color: #A7D7C5;
+        }
+
+        /* Week 4 category checkboxes */
+        .task-card.week4 .task-checklist input[type="checkbox"]:checked {
+            background-color: #F7D794;
+            border-color: #F7D794;
+        }
+
+        /* Add checkmark */
+        .task-checklist input[type="checkbox"]:checked::before {
+            content: '✓';
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            height: 100%;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .board-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .board-column {
+                min-width: 90%;
+            }
+        }
+
+        .board-controls {
+            display: flex;
+            align-items: center;
+            padding-right: 10px;
+        }
+
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .toggle-switch input {
+            display: none;
+        }
+
+        .toggle-slider {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background-color: #ccc;
+            border-radius: 12px;
+            margin-right: 10px;
+            transition: 0.4s;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            border-radius: 50%;
+            transition: 0.4s;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: #2ecc71;
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .toggle-label {
+            font-size: 14px;
+            color: #333;
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+
+        .task-checklist li.hidden {
+            display: none;
+        }
+
+        .company-name {
+            display: none;
+        }
+
+        /* Add these CSS rules before the media queries */
+        .view-controls {
+            margin-right: 20px;
+        }
+
+        .view-button {
+            padding: 8px 16px;
+            margin-left: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .view-button.active {
+            background: #2ecc71;
+            color: white;
+            border-color: #2ecc71;
+        }
+
+        .board-column.hidden {
+            display: none;
+        }
+
+        /* Add these CSS rules for the navigation arrows */
+        .week-navigation {
+            display: none;  /* Hidden by default, shown in single view */
+            align-items: center;
+            margin-right: 20px;
+        }
+
+        .week-navigation.visible {
+            display: flex;
+        }
+
+        .nav-arrow {
+            background: none;
+            border: none;
+            font-size: 24px;
+            padding: 5px 10px;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.2s ease;
+        }
+
+        .nav-arrow:hover {
+            color: #2ecc71;
+        }
+
+        .nav-arrow:disabled {
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .current-week-display {
+            margin: 0 15px;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* Add these CSS rules for the overlay system */
+        .task-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .overlay-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .close-overlay {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            border: none;
+            background: none;
+            padding: 5px;
+        }
+
+        .close-overlay:hover {
+            color: #2ecc71;
+        }
+
+        .task-description {
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .affiliate-links {
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        .affiliate-link {
+            display: block;
+            padding: 12px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-radius: 6px;
+            color: #2ecc71;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .affiliate-link:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .overlay-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-right: 30px;
+        }
+
+        /* Modify the existing task-checklist styles */
+        .task-checklist span {
+            cursor: pointer;
+        }
+
+        .task-checklist label {
+            cursor: default;
+        }
+
+        .task-checklist input[type="checkbox"] {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <img src="llcattorney-logo.JPG" alt="LLC Attorney Logo" class="header-logo">
+        <img src="headshot-jessica.JPG" alt="Jessica Headshot" class="header-headshot">
+    </header>
+
+    <div class="board-content">
+        <div class="board-header">
+            <h2>Capcha'd Beauty  |  e-Commerce Battle Plan</h2>
+            <div class="board-controls">
+                <div class="view-controls">
+                    <button class="view-button active" data-view="all">All Weeks</button>
+                    <button class="view-button" data-view="single">Single Week</button>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="hideCompleted">
+                    <span class="toggle-slider"></span>
+                    <span class="toggle-label">Hide Completed Tasks</span>
+                </label>
+                <div class="week-navigation">
+                    <button class="nav-arrow" id="prevWeek">←</button>
+                    <span class="current-week-display">Week 1</span>
+                    <button class="nav-arrow" id="nextWeek">→</button>
+                </div>
+            </div>
+        </div>
+        <div class="board-container">
+            <div class="board-column">
+                <div class="column-header week1">Week 1: Foundation</div>
+                <div class="task-card week1" draggable="true">
+                    <div class="task-title">Register Business & Get Permits</div>
+                    <ul class="task-checklist">
+                        <li><label><input type="checkbox" id="task-1-1"><span>Research business structure</span></label></li>
+                        <li><label><input type="checkbox" id="task-1-2"><span>File necessary paperwork</span></label></li>
+                        <li><label><input type="checkbox" id="task-1-3"><span>Apply for permits/licenses</span></label></li>
+                    </ul>
+                </div>
+
+                <div class="task-card week1" draggable="true">
+                    <div class="task-title">Set Up Business Bank Account</div>
+                    <ul class="task-checklist">
+                        <li><label><input type="checkbox" id="task-4-1"><span>Compare business accounts</span></label></li>
+                        <li><label><input type="checkbox" id="task-4-2"><span>Submit application</span></label></li>
+                    </ul>
+                </div>
+
+                <div class="task-card week1" draggable="true">
+                    <div class="task-title">Initial Research & Planning</div>
+                    <ul class="task-checklist">
+                        <li><label><input type="checkbox" id="task-3-1"><span>Market research</span></label></li>
+                        <li><label><input type="checkbox" id="task-3-2"><span>Contact suppliers</span></label></li>
+                        <li><label><input type="checkbox" id="task-5-1"><span>Compare eCommerce platforms</span></label></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="board-column">
+                <div class="column-header week2">Week 2: Brand & Product</div>
+                <div class="task-card week2" draggable="true">
+                    <div class="task-title">Define Brand Identity</div>
+                    <ul class="task-checklist">
+                        <li><label><input type="checkbox" id="task-2-1"><span>Create logo & color scheme</span></label></li>
+                        <li><label><input type="checkbox" id="task-2-2"><span>Develop brand guidelines</span></label></li>
+                    </ul>
+                </div>
+
+                <div class="task-card week2" draggable="true">
+                    <div class="task-title">Product Development</div>
+                    <ul class="task-checklist">
+                        <li><label><input type="checkbox" id="task-3-3"><span>Compare pricing & quality</span></label></li>
+                        <li><label><input type="checkbox" id="task-3-4"><span>Request samples from suppliers</span></label></li>
+                        <li><label><input type="checkbox" id="task-3-5"><span>Quality testing</span></label></li>
+                    </ul>
+                </div>
+
+                <div class="task-card week2" draggable="true">
+                    <div class="task-title">Website Foundation</div>
+                    <ul class="task-checklist">
+                        <li><label><input type="checkbox" id="task-7-1"><span>Install theme</span></label></li>
+                        <li><label><input type="checkbox" id="task-7-2"><span>Configure settings</span></label></li>
+                        <li><label><input type="checkbox" id="task-7-3"><span>Set up payment gateway</span></label></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="board-column">
+                <div class="column-header week3">Week 3: Content & Marketing</div>
+                <div class="task-card week3" draggable="true">
+                    <div class="task-title">Product Content Creation</div>
+                    <ul class="task-checklist">
+                        <li><label><input type="checkbox" id="task-8-1"><span>Take product photos</span></label></li>
+                        <li><label><input type="checkbox" id="task-8-2"><span>Write product descriptions</span></label></li>
+                        <li><label><input type="checkbox" id="task-8-4"><span>Create lifestyle shots</span></label></li>
+                    </ul>
+                </div>
+
+                <div class="task-card week3" draggable="true">
+                    <div class="task-title">Marketing Setup</div>
+                    <ul class="task-checklist">
+                        <li><label><input type="checkbox" id="task-10-1"><span>Set up social media profiles</span></label></li>
+                        <li><label><input type="checkbox" id="task-12-1"><span>Set up email platform</span></label></li>
+                        <li><label><input type="checkbox" id="task-12-2"><span>Design email templates</span></label></li>
+                    </ul>
+                </div>
+
+                <div class="task-card week3" draggable="true">
+                    <div class="task-title">Website Content</div>
+                    <ul class="task-checklist">
+                        <li><label><input type="checkbox" id="task-7-5"><span>Add products to store</span></label></li>
+                        <li><label><input type="checkbox" id="task-8-3"><span>SEO optimization</span></label></li>
+                        <li><label><input type="checkbox" id="task-7-7"><span>Mobile optimization</span></label></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="board-column">
+                <div class="column-header week4">Week 4: Launch Prep</div>
+                <div class="task-card week4" draggable="true">
+                    <div class="task-title">Final Testing</div>
+                    <ul class="task-checklist">
+                        <li><label><input type="checkbox" id="task-13-1"><span>Website testing</span></label></li>
+                        <li><label><input type="checkbox" id="task-7-6"><span>Test checkout process</span></label></li>
+                        <li><label><input type="checkbox" id="task-13-4"><span>Team briefing</span></label></li>
+                    </ul>
+                </div>
+
+                <div class="task-card week4" draggable="true">
+                    <div class="task-title">Launch Marketing</div>
+                    <ul class="task-checklist">
+                        <li><label><input type="checkbox" id="task-13-2"><span>Set up ad accounts</span></label></li>
+                        <li><label><input type="checkbox" id="task-12-3"><span>Create welcome sequence</span></label></li>
+                        <li><label><input type="checkbox" id="task-13-3"><span>Schedule announcements</span></label></li>
+                    </ul>
+                </div>
+
+                <div class="task-card week4" draggable="true">
+                    <div class="task-title">Launch Day</div>
+                    <ul class="task-checklist">
+                        <li><label><input type="checkbox" id="task-14-1"><span>Go live announcement</span></label></li>
+                        <li><label><input type="checkbox" id="task-14-2"><span>Social media push</span></label></li>
+                        <li><label><input type="checkbox" id="task-14-3"><span>Email announcement</span></label></li>
+                        <li><label><input type="checkbox" id="task-14-4"><span>Monitor & respond</span></label></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="task-overlay" id="taskOverlay">
+        <div class="overlay-content">
+            <button class="close-overlay">&times;</button>
+            <h3 class="overlay-title"></h3>
+            <div class="task-description"></div>
+            <div class="affiliate-links"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved states
+            const savedStates = JSON.parse(localStorage.getItem('taskStates') || '{}');
+            
+            // Apply saved states
+            document.querySelectorAll('.task-checklist input[type="checkbox"]').forEach(checkbox => {
+                const id = checkbox.id;
+                if (savedStates[id]) {
+                    checkbox.checked = true;
+                    checkbox.nextElementSibling.classList.add('checked');
+                }
+            });
+            
+            // Add toggle functionality
+            const hideCompletedToggle = document.getElementById('hideCompleted');
+            
+            function updateTaskVisibility() {
+                const isHidden = hideCompletedToggle.checked;
+                document.querySelectorAll('.task-checklist li').forEach(item => {
+                    const checkbox = item.querySelector('input[type="checkbox"]');
+                    if (checkbox.checked) {
+                        item.classList.toggle('hidden', isHidden);
+                    }
+                });
+
+                // Hide empty cards
+                document.querySelectorAll('.task-card').forEach(card => {
+                    const visibleTasks = card.querySelectorAll('.task-checklist li:not(.hidden)');
+                    if (visibleTasks.length === 0) {
+                        card.style.display = 'none';
+                    } else {
+                        card.style.display = 'block';
+                    }
+                });
+            }
+
+            hideCompletedToggle.addEventListener('change', updateTaskVisibility);
+
+            // Update checkbox handler to include visibility check
+            document.querySelectorAll('.task-checklist input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const span = this.nextElementSibling;
+                    if (this.checked) {
+                        span.classList.add('checked');
+                    } else {
+                        span.classList.remove('checked');
+                    }
+                    
+                    // Save states
+                    const states = JSON.parse(localStorage.getItem('taskStates') || '{}');
+                    states[this.id] = this.checked;
+                    localStorage.setItem('taskStates', JSON.stringify(states));
+
+                    // Update visibility if toggle is on
+                    if (hideCompletedToggle.checked) {
+                        updateTaskVisibility();
+                    }
+                });
+            });
+
+            // Drag and drop functionality
+            const cards = document.querySelectorAll('.task-card');
+            const columns = document.querySelectorAll('.board-column');
+
+            cards.forEach(card => {
+                card.addEventListener('dragstart', () => {
+                    card.classList.add('dragging');
+                });
+
+                card.addEventListener('dragend', () => {
+                    card.classList.remove('dragging');
+                });
+            });
+
+            columns.forEach(column => {
+                column.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    const draggingCard = document.querySelector('.dragging');
+                    column.appendChild(draggingCard);
+                });
+            });
+
+            // View switching functionality
+            let currentWeek = 1;
+            const viewButtons = document.querySelectorAll('.view-button');
+            // Avoid redeclaring columns variable
+            const boardColumns = document.querySelectorAll('.board-column');
+
+            function updateView(view) {
+                if (view === 'all') {
+                    boardColumns.forEach(column => column.classList.remove('hidden'));
+                } else {
+                    columns.forEach((column, index) => {
+                        column.classList.toggle('hidden', index + 1 !== currentWeek);
+                    });
+                }
+            }
+
+            viewButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Update active button state
+                    viewButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    const view = button.dataset.view;
+                    if (view === 'single' && !columns[currentWeek - 1].classList.contains('hidden')) {
+                        // If switching to single view, keep current week
+                        updateView('single');
+                    } else if (view === 'single') {
+                        // If switching to single view and current week is hidden, show week 1
+                        currentWeek = 1;
+                        updateView('single');
+                    } else {
+                        updateView('all');
+                    }
+                });
+            });
+
+            // Add click handlers for column headers to switch weeks in single view
+            document.querySelectorAll('.column-header').forEach((header, index) => {
+                header.style.cursor = 'pointer';
+                header.addEventListener('click', () => {
+                    if (document.querySelector('.view-button[data-view="single"]').classList.contains('active')) {
+                        currentWeek = index + 1;
+                        updateView('single');
+                    }
+                });
+            });
+
+            // Week navigation functionality
+            const weekNav = document.querySelector('.week-navigation');
+            const prevWeekBtn = document.getElementById('prevWeek');
+            const nextWeekBtn = document.getElementById('nextWeek');
+            const weekDisplay = document.querySelector('.current-week-display');
+
+            function updateWeekNavigation() {
+                // Update week display
+                weekDisplay.textContent = `Week ${currentWeek}`;
+                
+                // Update button states
+                prevWeekBtn.disabled = currentWeek === 1;
+                nextWeekBtn.disabled = currentWeek === 4;
+            }
+
+            prevWeekBtn.addEventListener('click', () => {
+                if (currentWeek > 1) {
+                    currentWeek--;
+                    updateView('single');
+                    updateWeekNavigation();
+                }
+            });
+
+            nextWeekBtn.addEventListener('click', () => {
+                if (currentWeek < 4) {
+                    currentWeek++;
+                    updateView('single');
+                    updateWeekNavigation();
+                }
+            });
+
+            // Modify the existing view button click handler to show/hide navigation
+            viewButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    viewButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    const view = button.dataset.view;
+                    weekNav.classList.toggle('visible', view === 'single');
+                    
+                    if (view === 'single' && !columns[currentWeek - 1].classList.contains('hidden')) {
+                        updateView('single');
+                    } else if (view === 'single') {
+                        currentWeek = 1;
+                        updateView('single');
+                    } else {
+                        updateView('all');
+                    }
+                    
+                    updateWeekNavigation();
+                });
+            });
+
+            // Update the column header click handler
+            document.querySelectorAll('.column-header').forEach((header, index) => {
+                header.style.cursor = 'pointer';
+                header.addEventListener('click', () => {
+                    if (document.querySelector('.view-button[data-view="single"]').classList.contains('active')) {
+                        currentWeek = index + 1;
+                        updateView('single');
+                        updateWeekNavigation();
+                    }
+                });
+            });
+
+            // Task overlay functionality
+            const taskData = {
+                'task-1-1': {
+                    title: 'Research Business Structure',
+                    description: 'Determine the best legal structure for your beauty business. Consider factors like liability protection, tax implications, and future growth plans. Common options include LLC, Sole Proprietorship, or Corporation.',
+                    links: [
+                        { text: 'LLC Formation Services (Legal Zoom)', url: '#legalzoom-affiliate' },
+                        { text: 'Business Structure Guide (Incfile)', url: '#incfile-affiliate' },
+                        { text: 'Free Business Structure Consultation', url: '#consultation-affiliate' }
+                    ]
+                },
+                'task-2-1': {
+                    title: 'Create Logo & Color Scheme',
+                    description: 'Develop a professional and memorable brand identity that resonates with your target beauty market. Your logo should be versatile enough for packaging, website, and social media use.',
+                    links: [
+                        { text: 'Professional Logo Design (99designs)', url: '#99designs-affiliate' },
+                        { text: 'DIY Logo Maker (Canva Pro)', url: '#canva-affiliate' },
+                        { text: 'Color Palette Generator (Adobe)', url: '#adobe-affiliate' }
+                    ]
+                },
+                'task-7-3': {
+                    title: 'Set Up Payment Gateway',
+                    description: 'Choose and implement a secure payment processing solution that supports multiple payment methods. Consider transaction fees, security features, and integration capabilities.',
+                    links: [
+                        { text: 'Stripe Payment Processing', url: '#stripe-affiliate' },
+                        { text: 'Square for E-commerce', url: '#square-affiliate' },
+                        { text: 'PayPal Business Account', url: '#paypal-affiliate' }
+                    ]
+                },
+                // Add more tasks following the same pattern...
+            };
+
+            const overlay = document.getElementById('taskOverlay');
+            const overlayTitle = overlay.querySelector('.overlay-title');
+            const overlayDescription = overlay.querySelector('.task-description');
+            const overlayLinks = overlay.querySelector('.affiliate-links');
+
+            // Modify the task click handlers
+            document.querySelectorAll('.task-checklist span').forEach(span => {
+                span.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const taskId = e.target.parentElement.querySelector('input').id;
+                    const task = taskData[taskId];
+
+                    if (task) {
+                        overlayTitle.textContent = task.title;
+                        overlayDescription.textContent = task.description;
+                        
+                        // Clear existing links
+                        overlayLinks.innerHTML = '';
+                        
+                        // Add new links
+                        task.links.forEach(link => {
+                            const a = document.createElement('a');
+                            a.href = link.url;
+                            a.className = 'affiliate-link';
+                            a.textContent = link.text;
+                            a.target = '_blank';
+                            overlayLinks.appendChild(a);
+                        });
+
+                        overlay.style.display = 'flex';
+                    }
+                });
+            });
+
+            // Close overlay functionality
+            overlay.querySelector('.close-overlay').addEventListener('click', () => {
+                overlay.style.display = 'none';
+            });
+
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.style.display = 'none';
+                }
+            });
+
+            // Prevent checkbox clicks from triggering overlay
+            document.querySelectorAll('.task-checklist input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
